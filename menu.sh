@@ -7,17 +7,6 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-ascii_art() {
-    echo -e "${GREEN}"
-    echo " _____ _   ________   _____ _             _ _           "
-    echo "|_   _| | / /| ___ \ /  ___| |           | (_)          "
-    echo "  | | | |/ / | |_/ / \ `--.| |_ _   _  __| |_  ___  ___ "
-    echo "  | | |    \ | ___ \  \`--. \ __| | | |/ _\` | |/ _ \/ __|"
-    echo "  | | | |\  \| |_/ / /\__/ / |_| |_| | (_| | | (_) \__ \\"
-    echo "  \_/ \_| \_/\____/  \____/ \__|\__,_|\__,_|_|\___/|___/"
-    echo -e "${NC}"
-}
-
 current_path=""
 
 list_files() {
@@ -37,7 +26,6 @@ is_directory() {
 }
 
 main_menu() {
-    ascii_art
     while true; do
         echo -e "${BLUE}Current path: /$current_path${NC}"
         PS3="Please enter your choice: "

@@ -1,5 +1,23 @@
 #!/bin/bash
 
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+ascii_art() {
+    echo -e "${GREEN}"
+    echo " _____ _   ________   _____ _             _ _           "
+    echo "|_   _| | / /| ___ \ /  ___| |           | (_)          "
+    echo "  | | | |/ / | |_/ / \ `--.| |_ _   _  __| |_  ___  ___ "
+    echo "  | | |    \ | ___ \  \`--. \ __| | | |/ _\` | |/ _ \/ __|"
+    echo "  | | | |\  \| |_/ / /\__/ / |_| |_| | (_| | | (_) \__ \\"
+    echo "  \_/ \_| \_/\____/  \____/ \__|\__,_|\__,_|_|\___/|___/"
+    echo -e "${NC}"
+}
+
 current_path=""
 
 list_files() {
@@ -8,7 +26,7 @@ list_files() {
 
 run_script() {
     local script_name=$1
-    echo "Running script: $script_name"
+    echo -e "${YELLOW}Running script: $script_name${NC}"
     curl -s "https://raw.githubusercontent.com/tkbstudios/awesome-bash-scripts/master/$current_path/$script_name" | bash
 }
 
@@ -19,13 +37,14 @@ is_directory() {
 }
 
 main_menu() {
+    ascii_art
     while true; do
-        echo "Current path: /$current_path"
+        echo -e "${BLUE}Current path: /$current_path${NC}"
         PS3="Please enter your choice: "
         options=($(list_files) ".." "Quit")
         select opt in "${options[@]}"; do
             if [[ "$opt" == "Quit" ]]; then
-                echo "Goodbye!"
+                echo -e "${RED}Goodbye!${NC}"
                 exit 0
             elif [[ "$opt" == ".." ]]; then
                 current_path=$(dirname "$current_path")
@@ -39,7 +58,7 @@ main_menu() {
                     run_script "$opt"
                 fi
             else
-                echo "Invalid option. Try another one."
+                echo -e "${RED}Invalid option. Try another one.${NC}"
             fi
         done
     done

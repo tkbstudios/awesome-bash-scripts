@@ -8,6 +8,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 current_path=""
+menuignore_path=".menuignore"
 
 list_files() {
     curl -s "https://api.github.com/repos/tkbstudios/awesome-bash-scripts/contents/$current_path" | grep '"name"' | cut -d '"' -f 4
@@ -16,7 +17,7 @@ list_files() {
 run_script() {
     local script_name=$1
     echo -e "${YELLOW}Running script: $script_name${NC}"
-    curl -s "https://raw.githubusercontent.com/tkbstudios/awesome-bash-scripts/master/$current_path/$script_name" | bash
+    curl -s "https://raw.githubusercontent.com/tkbstudios/awesome-bash-scripts/main/$current_path/$script_name" | bash
 }
 
 is_directory() {
@@ -25,11 +26,29 @@ is_directory() {
     echo "$response" | grep '"type": "dir"' > /dev/null
 }
 
+is_ignored() {
+    local item_name=$1
+    if [[ -f $menuignore_path ]]; then
+        while IFS= read -r line; do
+            if [[ "$item_name" == $line ]]; then
+                return 0
+            fi
+        done < $menuignore_path
+    fi
+    return 1
+}
+
 main_menu() {
     while true; do
         echo -e "${BLUE}Current path: /$current_path${NC}"
         PS3="Please enter your choice: "
-        options=($(list_files) ".." "Quit")
+        options=()
+        for item in $(list_files); do
+            if ! is_ignored "$item"; then
+                options+=("$item")
+            fi
+        done
+        options+=(".." "Quit")
         select opt in "${options[@]}"; do
             if [[ "$opt" == "Quit" ]]; then
                 echo -e "${RED}Goodbye!${NC}"
@@ -44,6 +63,7 @@ main_menu() {
                     break
                 else
                     run_script "$opt"
+                    break
                 fi
             else
                 echo -e "${RED}Invalid option. Try another one.${NC}"
